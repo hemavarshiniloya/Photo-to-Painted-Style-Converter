@@ -6,18 +6,30 @@ import base64
 import io
 from streamlit_drawable_canvas import st_canvas
 
-st.title("Guess the Drawing")
+import streamlit as st
 
-canvas_result = st.canvas(
-    fill_color="white",
-    stroke_width=5,
-    stroke_color="black",
-    background_color="white",
-    width=400,
-    height=400,
-    drawing_mode="freedraw",
-    key="canvas"
-)
+def main():
+    st.title("Draw on the Canvas")
+    
+    # Create a canvas component
+    canvas_result = st.canvas(
+        fill_color="white",
+        stroke_width=5,
+        stroke_color="black",
+        background_color="white",
+        width=400,
+        height=400,
+        drawing_mode="freedraw",
+        key="canvas"
+    )
+
+    # Use the canvas data (optional)
+    if canvas_result:
+        st.image(canvas_result.image_data)
+
+if __name__ == "__main__":
+    main()
+
 
 if canvas_result.image_data is not None:
     st.image(canvas_result.image_data)
