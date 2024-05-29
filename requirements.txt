@@ -6,3 +6,6 @@ numpy
 requests
 streamlit-drawable-canvas
 flask
+tensorflow
+pillow
+
