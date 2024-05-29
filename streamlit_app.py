@@ -1,28 +1,38 @@
 import streamlit as st
 import numpy as np
-from PIL import Image
+import requests
+from PIL import Image, ImageOps
 import base64
 import io
+
+from streamlit_drawable_canvas import st_canvas
 
 st.title("Guess the Drawing")
 
 # Create a canvas component
-canvas_result = st.image(
-    np.ones((400, 400, 3), dtype=np.uint8) * 255,  # Initialize with a white canvas
-    caption="Draw Here",
-    use_column_width=True,
-    channels="RGB"
+canvas_result = st_canvas(
+    fill_color="white",
+    stroke_width=5,
+    stroke_color="black",
+    background_color="white",
+    width=400,
+    height=400,
+    drawing_mode="freedraw",
+    key="canvas"
 )
 
-if canvas_result is not None:
+if canvas_result.image_data is not None:
     st.image(canvas_result.image_data)
     img = Image.fromarray((canvas_result.image_data * 255).astype(np.uint8)).convert("RGB")
 
-    if st.button("Submit Drawing"):
-        # Convert the image to PNG format
-        buffered = io.BytesIO()
-        img.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    buffered = io.BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-        # Perform actions based on the drawing
-        # For example, you can make a request to a backend server for predictions
+    if st.button("Submit Drawing"):
+        response = requests.post("http://127.0.0.1:5000/predict", json={"image": f"data:image/png;base64,{img_str}"})
+        if response.status_code == 200:
+            guess = response.json().get('guess')
+            st.write(f"The model guesses: {guess}")
+        else:
+            st.write("There was an error in the prediction process.")
