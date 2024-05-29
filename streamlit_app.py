@@ -16,15 +16,11 @@ import io
 
 st.title("Guess the Drawing")
 
-canvas_result = st.canvas(
-    fill_color="white",
-    stroke_width=5,
-    stroke_color="black",
-    background_color="white",
-    width=400,
-    height=400,
-    drawing_mode="freedraw",
-    key="canvas"
+canvas_result = st.image(
+    np.zeros((400, 400, 3), dtype=np.uint8),
+    caption="Draw Here",
+    use_column_width=True,
+    channels="RGB"
 )
 
 if canvas_result.image_data is not None:
