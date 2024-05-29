@@ -1,0 +1,8 @@
+streamlit
+tensorflow
+tensorflow-hub
+pillow
+numpy
+requests
+streamlit-drawable-canvas
+flask
