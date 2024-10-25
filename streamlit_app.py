@@ -35,15 +35,20 @@ def main():
 
         if st.button("Submit Drawing"):
             # Send the image to the prediction server
-            response = requests.post(
-                "http://127.0.0.1:5000/predict", 
-                json={"image": f"data:image/png;base64,{img_str}"}
-            )
-            if response.status_code == 200:
+            try:
+                response = requests.post(
+                    "http://127.0.0.1:5000/predict", 
+                    json={"image": f"data:image/png;base64,{img_str}"}
+                )
+                response.raise_for_status()  # Raise an error for bad responses
                 guess = response.json().get('guess')
                 st.write(f"The model guesses: {guess}")
-            else:
-                st.write("There was an error in the prediction process.")
+            except requests.exceptions.ConnectionError:
+                st.error("Could not connect to the prediction server. Please ensure it is running.")
+            except requests.exceptions.HTTPError as err:
+                st.error(f"HTTP error occurred: {err}")
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
 
 if __name__ == "__main__":
     main()
